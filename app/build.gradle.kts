@@ -51,6 +51,20 @@ dependencies {
     implementation(composeBom)
     androidTestImplementation(composeBom)
 
+    // 📍 Ubicación y permisos
+    implementation("com.google.android.gms:play-services-location:21.0.1")
+    implementation("com.google.accompanist:accompanist-permissions:0.34.0")
+
+    implementation("com.google.accompanist:accompanist-permissions:0.33.0-alpha")
+
+
+// 🔄 Coroutines para tareas asíncronas (ya deberías tenerlo, pero asegúrate)
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-play-services:1.7.3")
+
+
+    // DataStore (para persistencia local)
+    implementation("androidx.datastore:datastore-preferences:1.1.1")
+
     // ✅ Core Compose
     implementation("androidx.compose.ui:ui")
     implementation("androidx.compose.ui:ui-graphics")

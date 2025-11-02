@@ -15,79 +15,103 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import coil.compose.AsyncImage
+import coil.request.ImageRequest
 import com.localgo.localgo2.R
+import com.localgo.localgo2.ui.viewmodel.WeatherViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(navController: NavController) {
+    val vm: WeatherViewModel = viewModel()
+    val weather = vm.weather
+    val isLoading = vm.isLoading
+    val error = vm.error
 
-    var climaError by remember { mutableStateOf(false) }
+    // Se ejecuta solo una vez al crear la pantalla
+    LaunchedEffect(Unit) { vm.loadWeather() }
 
-    val lugares = listOf(
-        LugarData(
-            "Cerro San Cristóbal",
-            "Vista panorámica de Santiago. Ideal para fotos al atardecer.",
-            R.drawable.cerro_san_cristobal
-        ),
-        LugarData(
-            "Barrio Bellavista",
-            "Bares, murales, vida nocturna y cultura bohemia.",
-            R.drawable.barrio_bellavista
-        ),
-        LugarData(
-            "Sky Costanera",
-            "Mirador 360° más alto de Latinoamérica.",
-            R.drawable.sky_costanera
-        ),
-        LugarData(
-            "Museo de Bellas Artes",
-            "Arte chileno e internacional en pleno Parque Forestal.",
-            R.drawable.museo_bellasartes
+    val lugares = remember {
+        listOf(
+            LugarData(
+                "Cerro San Cristóbal",
+                "Vista panorámica de Santiago. Ideal para fotos al atardecer.",
+                R.drawable.cerro_san_cristobal
+            ),
+            LugarData(
+                "Barrio Bellavista",
+                "Bares, murales, vida nocturna y cultura bohemia.",
+                R.drawable.barrio_bellavista
+            ),
+            LugarData(
+                "Sky Costanera",
+                "Mirador 360° más alto de Latinoamérica.",
+                R.drawable.sky_costanera
+            ),
+            LugarData(
+                "Museo de Bellas Artes",
+                "Arte chileno e internacional en pleno Parque Forestal.",
+                R.drawable.museo_bellasartes
+            )
         )
-    )
+    }
 
-    Column(
+    // ✅ LazyColumn principal (solo una raíz scrollable)
+    LazyColumn(
         modifier = Modifier
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.background)
-            .padding(16.dp)
+            .padding(16.dp),
+        verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
-        // clima
-        Card(
-            modifier = Modifier.fillMaxWidth(),
-            shape = RoundedCornerShape(20.dp),
-            colors = CardDefaults.cardColors(containerColor = Color(0xFF00796B))
-        ) {
-            Column(
-                modifier = Modifier.padding(16.dp),
-                horizontalAlignment = Alignment.CenterHorizontally
+        // 🌤️ Sección de clima
+        item {
+            Card(
+                modifier = Modifier.fillMaxWidth(),
+                shape = RoundedCornerShape(20.dp),
+                colors = CardDefaults.cardColors(containerColor = Color(0xFF00796B))
             ) {
-                if (climaError) {
-                    Text("No se pudo cargar el clima ☁️", color = Color.White)
-                } else {
-                    Text("Clima actual en Santiago 🌤️", color = Color.White)
-                    Text("23°C, Soleado", color = Color.White, fontWeight = FontWeight.Bold)
+                Column(
+                    modifier = Modifier.padding(16.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    when {
+                        isLoading -> Text("Cargando clima ⛅", color = Color.White)
+                        error != null -> Text("Error al cargar clima ❌", color = Color.Red)
+                        weather != null -> {
+                            val temp = weather.current_weather.temperature
+                            val wind = weather.current_weather.windspeed
+                            Text("Clima actual en Santiago 🌤️", color = Color.White)
+                            Text(
+                                "$temp°C — Viento: $wind km/h",
+                                color = Color.White,
+                                fontWeight = FontWeight.Bold
+                            )
+                        }
+                    }
                 }
             }
         }
 
-        Spacer(modifier = Modifier.height(20.dp))
+        // 🏞️ Sección de lugares
+        item {
+            Text(
+                text = "Lugares imperdibles 🏞️",
+                style = MaterialTheme.typography.titleMedium.copy(
+                    fontWeight = FontWeight.Bold,
+                    color = MaterialTheme.colorScheme.onBackground
+                )
+            )
+        }
 
-        Text(
-            "Lugares imperdibles 🏞️",
-            style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold)
-        )
+        items(lugares, key = { it.nombre }) { lugar ->
+            LugarCard(lugar)
+        }
 
-        Spacer(modifier = Modifier.height(10.dp))
-
-        LazyColumn(
-            modifier = Modifier.fillMaxSize(),
-            verticalArrangement = Arrangement.spacedBy(12.dp)
-        ) {
-            items(lugares) { lugar ->
-                LugarCard(lugar)
-            }
+        item {
+            Spacer(modifier = Modifier.height(32.dp))
         }
     }
 }
@@ -95,12 +119,15 @@ fun HomeScreen(navController: NavController) {
 @Composable
 fun LugarCard(lugar: LugarData) {
     Card(
-        modifier = Modifier.fillMaxWidth(),
+        modifier = Modifier
+            .fillMaxWidth()
+            .heightIn(min = 250.dp, max = 350.dp),
         shape = RoundedCornerShape(16.dp),
-        elevation = CardDefaults.cardElevation(6.dp),
+        elevation = CardDefaults.cardElevation(4.dp),
         colors = CardDefaults.cardColors(containerColor = Color(0xFFF3E5F5))
     ) {
-        Column(modifier = Modifier.padding(16.dp)) {
+        Column(modifier = Modifier.fillMaxWidth()) {
+            // ✅ Carga de imagen optimizada
             Image(
                 painter = painterResource(id = lugar.imagen),
                 contentDescription = lugar.nombre,
@@ -108,13 +135,18 @@ fun LugarCard(lugar: LugarData) {
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(180.dp)
-                    .padding(bottom = 8.dp)
             )
-            Text(lugar.nombre, fontWeight = FontWeight.Bold)
-            Text(lugar.descripcion, color = Color.Gray)
-            Spacer(modifier = Modifier.height(6.dp))
-            TextButton(onClick = { /* TODO: abrir en mapa con navController.navigate("map") */ }) {
-                Text("Ver en mapa →", color = Color(0xFF00796B))
+
+            Column(modifier = Modifier.padding(16.dp)) {
+                Text(lugar.nombre, fontWeight = FontWeight.Bold)
+                Text(lugar.descripcion, color = Color.Gray)
+                Spacer(modifier = Modifier.height(8.dp))
+                TextButton(
+                    onClick = { /* TODO: abrir en mapa */ },
+                    modifier = Modifier.align(Alignment.End)
+                ) {
+                    Text("Ver en mapa →", color = Color(0xFF00796B))
+                }
             }
         }
     }

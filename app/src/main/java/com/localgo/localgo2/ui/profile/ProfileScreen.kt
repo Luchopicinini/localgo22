@@ -16,22 +16,43 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.rememberAsyncImagePainter
+import com.localgo.localgo2.data.UserData
+import com.localgo.localgo2.ui.viewmodel.ProfileViewModel
 
 @Composable
-fun ProfileScreen(onLogout: () -> Unit) {
-    var imageUri by remember { mutableStateOf<Uri?>(null) }
+fun ProfileScreen(
+    onLogout: () -> Unit,
+    vm: ProfileViewModel = viewModel()
+) {
+    // estado global que viene del ViewModel (DataStore + memoria)
+    val userData by vm.userState.collectAsState()
 
-    // Datos editables
-    var nombre by remember { mutableStateOf("Luciano Picinini") }
-    var email by remember { mutableStateOf("luciano@example.com") }
-    var ubicacion by remember { mutableStateOf("Santiago, Chile") }
+    // estados locales editables en la UI
     var editMode by remember { mutableStateOf(false) }
+    var nombre by remember { mutableStateOf(userData.nombre) }
+    var email by remember { mutableStateOf(userData.email) }
+    var ubicacion by remember { mutableStateOf(userData.ubicacion) }
+    var fotoUri by remember { mutableStateOf(userData.fotoUri) }
 
+    // picker de imagen (galería)
     val launcher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.GetContent()
-    ) { uri: Uri? ->
-        imageUri = uri
+    ) { picked: Uri? ->
+        if (picked != null) {
+            fotoUri = picked.toString()
+        }
+    }
+
+    // si cambian los datos globales (ej: después de guardar), refrescamos campos
+    LaunchedEffect(userData) {
+        if (!editMode) {
+            nombre = userData.nombre
+            email = userData.email
+            ubicacion = userData.ubicacion
+            fotoUri = userData.fotoUri
+        }
     }
 
     Column(
@@ -41,17 +62,17 @@ fun ProfileScreen(onLogout: () -> Unit) {
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Top
     ) {
-        // 🟣 Foto de perfil
+
+        // FOTO DE PERFIL
         Surface(
             modifier = Modifier
                 .size(120.dp)
-                .clip(CircleShape)
-                .background(MaterialTheme.colorScheme.primaryContainer),
-            color = Color.Transparent
+                .clip(CircleShape),
+            color = MaterialTheme.colorScheme.primaryContainer
         ) {
-            if (imageUri != null) {
+            if (fotoUri.isNotEmpty()) {
                 Image(
-                    painter = rememberAsyncImagePainter(imageUri),
+                    painter = rememberAsyncImagePainter(fotoUri),
                     contentDescription = "Foto de perfil",
                     contentScale = ContentScale.Crop,
                     modifier = Modifier.fillMaxSize()
@@ -63,59 +84,70 @@ fun ProfileScreen(onLogout: () -> Unit) {
                         .background(MaterialTheme.colorScheme.primaryContainer),
                     contentAlignment = Alignment.Center
                 ) {
-                    Text("Sin foto", color = Color.White)
+                    Text(
+                        "Sin foto",
+                        color = Color.White,
+                        style = MaterialTheme.typography.bodySmall
+                    )
                 }
             }
         }
 
-        Spacer(Modifier.height(16.dp))
+        Spacer(Modifier.height(12.dp))
 
-        // 🧍 Nombre editable
-        if (editMode) {
-            OutlinedTextField(
-                value = nombre,
-                onValueChange = { nombre = it },
-                label = { Text("Nombre") },
-                modifier = Modifier.fillMaxWidth()
-            )
-        } else {
-            Text(nombre, style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
-        }
-
-        Spacer(Modifier.height(8.dp))
-
-        // 📨 Email editable
-        if (editMode) {
-            OutlinedTextField(
-                value = email,
-                onValueChange = { email = it },
-                label = { Text("Correo electrónico") },
-                modifier = Modifier.fillMaxWidth()
-            )
-        } else {
-            Text(email, style = MaterialTheme.typography.bodyMedium)
-        }
-
-        Spacer(Modifier.height(8.dp))
-
-        // 📍 Ubicación editable
-        if (editMode) {
-            OutlinedTextField(
-                value = ubicacion,
-                onValueChange = { ubicacion = it },
-                label = { Text("Ubicación") },
-                modifier = Modifier.fillMaxWidth()
-            )
-        } else {
-            Text(ubicacion, style = MaterialTheme.typography.bodyMedium)
+        // Cambiar foto
+        Button(
+            onClick = { launcher.launch("image/*") },
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Text("Cambiar foto de perfil")
         }
 
         Spacer(Modifier.height(24.dp))
 
-        // 🧩 Botones
+        // CAMPOS
+        ProfileField(
+            label = "Nombre",
+            value = nombre,
+            enabled = editMode,
+            onChange = { nombre = it }
+        )
+
+        Spacer(Modifier.height(12.dp))
+
+        ProfileField(
+            label = "Correo",
+            value = email,
+            enabled = editMode,
+            onChange = { email = it }
+        )
+
+        Spacer(Modifier.height(12.dp))
+
+        ProfileField(
+            label = "Ubicación",
+            value = ubicacion,
+            enabled = editMode,
+            onChange = { ubicacion = it }
+        )
+
+        Spacer(Modifier.height(24.dp))
+
+        // BOTONES (Editar / Guardar)
         if (editMode) {
             Button(
-                onClick = { editMode = false },
+                onClick = {
+                    // Guardar en DataStore
+                    vm.guardarCambios(
+                        UserData(
+                            nombre = nombre,
+                            email = email,
+                            ubicacion = ubicacion,
+                            fotoUri = fotoUri
+                        )
+                    )
+                    editMode = false
+                },
                 modifier = Modifier.fillMaxWidth()
             ) {
                 Text("Guardar cambios")
@@ -131,15 +163,6 @@ fun ProfileScreen(onLogout: () -> Unit) {
 
         Spacer(Modifier.height(12.dp))
 
-        Button(
-            onClick = { launcher.launch("image/*") },
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            Text("Cambiar foto de perfil")
-        }
-
-        Spacer(Modifier.height(12.dp))
-
         OutlinedButton(
             onClick = { onLogout() },
             modifier = Modifier.fillMaxWidth(),
@@ -147,7 +170,37 @@ fun ProfileScreen(onLogout: () -> Unit) {
                 contentColor = MaterialTheme.colorScheme.error
             )
         ) {
-            Text("Cerrar sesión")
+            Text("Cerrar sesión", fontWeight = FontWeight.Bold)
+        }
+    }
+}
+
+// Composable reutilizable para cada campo
+@Composable
+private fun ProfileField(
+    label: String,
+    value: String,
+    enabled: Boolean,
+    onChange: (String) -> Unit
+) {
+    if (enabled) {
+        OutlinedTextField(
+            value = value,
+            onValueChange = onChange,
+            label = { Text(label) },
+            modifier = Modifier.fillMaxWidth()
+        )
+    } else {
+        Column(modifier = Modifier.fillMaxWidth()) {
+            Text(
+                text = label,
+                style = MaterialTheme.typography.labelSmall,
+                color = MaterialTheme.colorScheme.primary
+            )
+            Text(
+                text = value,
+                style = MaterialTheme.typography.bodyLarge
+            )
         }
     }
 }

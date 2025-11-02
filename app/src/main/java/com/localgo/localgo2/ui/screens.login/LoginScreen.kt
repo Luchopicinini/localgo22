@@ -26,7 +26,7 @@ fun LoginScreen(
     var error by remember { mutableStateOf<String?>(null) }
     var visible by remember { mutableStateOf(false) }
 
-    // Animar aparición al cargar
+    // Animación de entrada
     LaunchedEffect(Unit) {
         visible = true
     }
@@ -36,7 +36,7 @@ fun LoginScreen(
             .fillMaxSize()
             .background(
                 Brush.verticalGradient(
-                    listOf(Color.Black, Color(0xFF1C1C1C))
+                    listOf(Color.Black, Color(0xFF121212))
                 )
             )
             .padding(24.dp),
@@ -52,7 +52,7 @@ fun LoginScreen(
                 modifier = Modifier.fillMaxWidth()
             ) {
                 Text(
-                    text = "LocalGo 🌎",
+                    text = "LocalGo",
                     style = MaterialTheme.typography.headlineMedium.copy(
                         color = Color.White,
                         fontWeight = FontWeight.ExtraBold,
@@ -61,7 +61,7 @@ fun LoginScreen(
                 )
                 Spacer(Modifier.height(8.dp))
                 Text(
-                    text = "Explora. Descubre. Conecta.",
+                    text = "Todo en una app.",
                     style = MaterialTheme.typography.bodyMedium.copy(
                         color = Color.Gray,
                         fontSize = 15.sp
@@ -74,7 +74,7 @@ fun LoginScreen(
                 OutlinedTextField(
                     value = email,
                     onValueChange = { email = it },
-                    label = { Text("Correo", color = Color.Gray) },
+                    label = { Text("Correo electrónico", color = Color.Gray) },
                     singleLine = true,
                     modifier = Modifier.fillMaxWidth(),
                     colors = OutlinedTextFieldDefaults.colors(
@@ -118,13 +118,23 @@ fun LoginScreen(
 
                 Spacer(Modifier.height(28.dp))
 
+                // ✅ Validación de correo y contraseña
                 Button(
                     onClick = {
-                        if (email.isNotBlank() && pass.isNotBlank()) {
-                            error = null
-                            onLoginSuccess()
-                        } else {
-                            error = "Por favor, completa todos los campos"
+                        when {
+                            email.isBlank() || pass.isBlank() -> {
+                                error = "Por favor, completa todos los campos."
+                            }
+                            !email.contains("@") -> {
+                                error = "El correo electrónico debe incluir '@'."
+                            }
+                            pass.length < 4 -> {
+                                error = "La contraseña debe tener al menos 4 caracteres."
+                            }
+                            else -> {
+                                error = null
+                                onLoginSuccess()
+                            }
                         }
                     },
                     modifier = Modifier

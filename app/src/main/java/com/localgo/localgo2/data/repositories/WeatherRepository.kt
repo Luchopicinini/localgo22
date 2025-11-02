@@ -1,24 +1,20 @@
-package com.localgo.localgo2.data.weather
+package com.localgo.localgo2.data.repositories
 
+import com.localgo.localgo2.data.api.WeatherApi
+import com.localgo.localgo2.data.api.WeatherResponse
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
-class WeatherRepository(
-    private val apiKey: String
-) {
+class WeatherRepository {
 
-    private val api: WeatherApi = Retrofit.Builder()
-        .baseUrl("https://api.openweathermap.org/") // base
+    private val retrofit = Retrofit.Builder()
+        .baseUrl("https://api.open-meteo.com/")
         .addConverterFactory(GsonConverterFactory.create())
         .build()
-        .create(WeatherApi::class.java)
 
-    // Santiago centro: -33.4489, -70.6693
-    suspend fun getSantiagoWeather(): WeatherResponse {
-        return api.getWeather(
-            lat = -33.4489,
-            lon = -70.6693,
-            apiKey = apiKey
-        )
+    private val api = retrofit.create(WeatherApi::class.java)
+
+    suspend fun getWeather(): WeatherResponse {
+        return api.getWeather()
     }
 }

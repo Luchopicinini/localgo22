@@ -22,26 +22,26 @@ import androidx.compose.ui.unit.sp
 @Composable
 fun TipsScreen() {
     val tips = listOf(
-        "🌅 Sube al Cerro San Cristóbal al atardecer para la mejor vista de Santiago.",
-        "🚶 Recorre el Barrio Lastarria, lleno de arte, cafés y librerías.",
-        "🦐 Almorzá en el Mercado Central, ideal para probar mariscos frescos.",
-        "🚴 Usa bicicleta para moverte por Providencia y Vitacura, hay ciclovías seguras.",
-        "🎭 Visita el GAM, siempre hay exposiciones o espectáculos gratuitos.",
-        "☕ Tomate un café en el barrio Italia, cada rincón tiene su estilo.",
-        "🌳 Camina por el Parque Bicentenario, perfecto para un picnic o ver aves.",
-        "🏛️ Entra al Museo de Bellas Artes, es gratis y tiene arquitectura hermosa.",
-        "🌮 Prueba un completo en Fuente Alemana, un clásico santiaguino.",
-        "🌄 Sube al Sky Costanera, el mirador más alto de Latinoamérica.",
-        "🚇 Usa el Metro en hora valle (no punta), es más tranquilo y rápido.",
-        "🍷 Si te gusta el vino, hacé una cata en el Valle del Maipo (a 40 min).",
-        "🎶 En verano, busca los conciertos gratuitos del Parque de las Esculturas.",
-        "🥾 Sube el Cerro Manquehue temprano; la vista vale el esfuerzo.",
-        "🛍️ Visita ferias locales como la de Ñuñoa o la Persa BioBío, llenas de historia.",
-        "📸 Desde el puente Pío Nono, tenés una vista genial del río Mapocho.",
-        "🌤️ En verano, usá protector solar y llevá agua; el calor puede ser fuerte.",
-        "🚰 El agua del grifo es potable, no hace falta comprar botellas.",
-        "🚌 Usa RedBus o Bip! para pagar transporte, la tarjeta sirve en todo.",
-        "🌙 No camines solo por zonas solitarias de noche, especialmente en el centro."
+        " Sube al Cerro San Cristóbal al atardecer para la mejor vista de Santiago.",
+        " Recorre el Barrio Lastarria, lleno de arte, cafés y librerías.",
+        " Almorzá en el Mercado Central, ideal para probar mariscos frescos.",
+        " Usa bicicleta para moverte por Providencia y Vitacura, hay ciclovías seguras.",
+        " Visita el GAM, siempre hay exposiciones o espectáculos gratuitos.",
+        " Tomate un café en el barrio Italia, cada rincón tiene su estilo.",
+        " Camina por el Parque Bicentenario, perfecto para un picnic o ver aves.",
+        "️ Entra al Museo de Bellas Artes, es gratis y tiene arquitectura hermosa.",
+        " Prueba un completo en Fuente Alemana, un clásico santiaguino.",
+        " Sube al Sky Costanera, el mirador más alto de Latinoamérica.",
+        " Usa el Metro en hora valle (no punta), es más tranquilo y rápido.",
+        " Si te gusta el vino, hacé una cata en el Valle del Maipo (a 40 min).",
+        " En verano, busca los conciertos gratuitos del Parque de las Esculturas.",
+        " Sube el Cerro Manquehue temprano; la vista vale el esfuerzo.",
+        "️ Visita ferias locales como la de Ñuñoa o la Persa BioBío, llenas de historia.",
+        " Desde el puente Pío Nono, tenés una vista genial del río Mapocho.",
+        "️ En verano, usá protector solar y llevá agua; el calor puede ser fuerte.",
+        " El agua del grifo es potable, no hace falta comprar botellas.",
+        " Usa RedBus o Bip! para pagar transporte, la tarjeta sirve en todo.",
+        " No camines solo por zonas solitarias de noche, especialmente en el centro."
     )
 
     // Fondo degradado suave
@@ -65,7 +65,7 @@ fun TipsScreen() {
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Text(
-                text = "🌇 Tips locales de Santiago",
+                text = "Tips locales",
                 style = MaterialTheme.typography.titleLarge.copy(
                     fontWeight = FontWeight.ExtraBold,
                     color = Color(0xFF0D47A1),

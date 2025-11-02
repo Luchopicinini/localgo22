@@ -85,7 +85,7 @@ fun ProfileScreen(
                     contentAlignment = Alignment.Center
                 ) {
                     Text(
-                        "Sin foto",
+                        "",
                         color = Color.White,
                         style = MaterialTheme.typography.bodySmall
                     )
@@ -107,7 +107,7 @@ fun ProfileScreen(
 
         // CAMPOS
         ProfileField(
-            label = "Nombre",
+            label = "Usuario",
             value = nombre,
             enabled = editMode,
             onChange = { nombre = it }
@@ -116,7 +116,7 @@ fun ProfileScreen(
         Spacer(Modifier.height(12.dp))
 
         ProfileField(
-            label = "Correo",
+            label = "Mail",
             value = email,
             enabled = editMode,
             onChange = { email = it }

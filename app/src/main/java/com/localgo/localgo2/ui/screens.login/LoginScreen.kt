@@ -26,7 +26,7 @@ fun LoginScreen(
     var error by remember { mutableStateOf<String?>(null) }
     var visible by remember { mutableStateOf(false) }
 
-    // Animación de entrada
+
     LaunchedEffect(Unit) {
         visible = true
     }
@@ -52,7 +52,7 @@ fun LoginScreen(
                 modifier = Modifier.fillMaxWidth()
             ) {
                 Text(
-                    text = "LocalGo",
+                    text = "Local Go",
                     style = MaterialTheme.typography.headlineMedium.copy(
                         color = Color.White,
                         fontWeight = FontWeight.ExtraBold,
@@ -61,7 +61,7 @@ fun LoginScreen(
                 )
                 Spacer(Modifier.height(8.dp))
                 Text(
-                    text = "Todo en una app.",
+                    text = "Perfecta para explorar.",
                     style = MaterialTheme.typography.bodyMedium.copy(
                         color = Color.Gray,
                         fontSize = 15.sp
@@ -70,11 +70,11 @@ fun LoginScreen(
 
                 Spacer(Modifier.height(32.dp))
 
-                // Campo correo
+
                 OutlinedTextField(
                     value = email,
                     onValueChange = { email = it },
-                    label = { Text("Correo electrónico", color = Color.Gray) },
+                    label = { Text("Usuario", color = Color.Gray) },
                     singleLine = true,
                     modifier = Modifier.fillMaxWidth(),
                     colors = OutlinedTextFieldDefaults.colors(
@@ -93,7 +93,7 @@ fun LoginScreen(
                 OutlinedTextField(
                     value = pass,
                     onValueChange = { pass = it },
-                    label = { Text("Contraseña", color = Color.Gray) },
+                    label = { Text("Password", color = Color.Gray) },
                     singleLine = true,
                     visualTransformation = PasswordVisualTransformation(),
                     modifier = Modifier.fillMaxWidth(),
@@ -118,7 +118,7 @@ fun LoginScreen(
 
                 Spacer(Modifier.height(28.dp))
 
-                // ✅ Validación de correo y contraseña
+                // Validación de correo y contraseña
                 Button(
                     onClick = {
                         when {

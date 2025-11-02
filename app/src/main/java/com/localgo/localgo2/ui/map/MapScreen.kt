@@ -57,7 +57,7 @@ fun MapScreen() {
         else -> {}
     }
 
-    // 2️⃣ Obtiene la ubicación si el permiso fue concedido
+    //  Obtiene la ubicación si el permiso fue concedido
     LaunchedEffect(locationPermission.status) {
         if (locationPermission.status.isGranted) {
             scope.launch {
@@ -71,7 +71,7 @@ fun MapScreen() {
         }
     }
 
-    // 3️⃣ Lista de lugares turísticos de Chile
+    // 3️Lista de lugares turísticos de Chile
     val lugares = remember {
         listOf(
             Lugar("Desierto de Atacama", "El más árido del mundo, ideal para astroturismo", "Antofagasta", LatLng(-23.65, -68.22)),
@@ -104,7 +104,7 @@ fun MapScreen() {
         )
     }
 
-    // 4️⃣ Mapa
+    // 4️ Mapa
     Box(modifier = Modifier.fillMaxSize()) {
         GoogleMap(
             modifier = Modifier.fillMaxSize(),
@@ -133,7 +133,7 @@ fun MapScreen() {
             }
         }
 
-        // 5️⃣ Tarjeta informativa del lugar seleccionado
+        // 5️Tarjeta informativa del lugar seleccionado
         lugarSeleccionado?.let { lugar ->
             Card(
                 modifier = Modifier

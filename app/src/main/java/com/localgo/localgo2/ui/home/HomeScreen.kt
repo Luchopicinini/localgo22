@@ -30,7 +30,7 @@ fun HomeScreen(navController: NavController) {
     val isLoading = vm.isLoading
     val error = vm.error
 
-    // Se ejecuta solo una vez al crear la pantalla
+
     LaunchedEffect(Unit) { vm.loadWeather() }
 
     val lugares = remember {
@@ -58,7 +58,6 @@ fun HomeScreen(navController: NavController) {
         )
     }
 
-    // ✅ LazyColumn principal (solo una raíz scrollable)
     LazyColumn(
         modifier = Modifier
             .fillMaxSize()
@@ -66,7 +65,7 @@ fun HomeScreen(navController: NavController) {
             .padding(16.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
-        // 🌤️ Sección de clima
+        // 🌤Sección de clima
         item {
             Card(
                 modifier = Modifier.fillMaxWidth(),
@@ -95,7 +94,7 @@ fun HomeScreen(navController: NavController) {
             }
         }
 
-        // 🏞️ Sección de lugares
+        // Sección de lugares
         item {
             Text(
                 text = "Lugares imperdibles 🏞️",
